@@ -1,29 +1,37 @@
 import { useState } from "react";
 
 function Todos() {
-  const [input, setInput] = useState('');
+  const [input, setInput] = useState("");
   const [todos, setTodos] = useState([]);
 
   console.log(input);
 
   const handleTodo = () => {
-    if (!input.trim()) return alert("Please Enter Todo")
+    if (!input.trim()) return alert("Please Enter Todo");
 
     const newTodo = {
-        id : Date.now(),
-        text: input
-    }
+      id: Date.now(),
+      text: input,
+      completed: false,
+    };
 
-    setTodos(prev => [...prev , newTodo])
+    setTodos((prev) => [...prev, newTodo]);
 
-    setInput('')
+    setInput("");
   };
 
   const handleDelete = (id) => {
-    
-    const updateState = todos.filter(todo => todo.id !== id)
-    setTodos(updateState)
-  }
+    const updateState = todos.filter((todo) => todo.id !== id);
+    setTodos(updateState);
+  };
+
+  const handleComplete = (id) => {
+    setTodos((prev) =>
+      prev.map((todo) =>
+        todo.id === id ? { ...todo, completed: !todo.completed } : todo
+      )
+    );
+  };
 
   return (
     <div>
@@ -42,8 +50,18 @@ function Todos() {
         <h4>Todo List</h4>
         <ul>
           {todos.map((todo) => (
-            <li key={todo.id}>{todo.text} <button onClick={() => handleDelete(todo.id)}>Delete</button> <button>Edit</button><br/> <br/></li>
-            
+            <li key={todo.id}>
+              <span
+                style={{
+                  textDecoration: todo.completed ? "line-through" : "none",
+                }}
+              >
+                {todo.text}
+              </span>{" "}
+              <button onClick={() => handleDelete(todo.id)}>Delete</button>{" "}
+              <button onClick={() => handleComplete(todo.id)}>Complete</button>
+              <br /> <br />
+            </li>
           ))}
         </ul>
       </div>
