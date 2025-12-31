@@ -3,6 +3,7 @@ import { useState } from "react";
 function Todos() {
   const [input, setInput] = useState("");
   const [todos, setTodos] = useState([]);
+  const [edit, setEdit] = useState(null)
 
   console.log(input);
 
@@ -23,6 +24,10 @@ function Todos() {
   const handleDelete = (id) => {
     const updateState = todos.filter((todo) => todo.id !== id);
     setTodos(updateState);
+    if(edit === id){
+      setEdit(null);
+      setInput('');
+    }
   };
 
   const handleComplete = (id) => {
@@ -31,7 +36,20 @@ function Todos() {
         todo.id === id ? { ...todo, completed: !todo.completed } : todo
       )
     );
+    
   };
+
+  const handleEdit = (todo) => {
+    setInput(todo.text)
+    setEdit(todo.id)
+  }
+
+  const handleSave = () => {
+    const update = todos.map( todo => todo.id === edit ? {...todo , text : input} : todo)
+    setTodos(update)
+    setInput('')
+    setEdit(null)
+  }
 
   return (
     <div>
@@ -42,8 +60,15 @@ function Todos() {
         value={input}
         onChange={(e) => setInput(e.target.value)}
       />
-      <button style={{ marginLeft: "10px" }} onClick={handleTodo}>
-        Add
+      <button style={{ marginLeft: "5px" }} onClick={() => {
+        if (edit === null) {
+          handleTodo()
+        } else {
+          handleSave()
+        }
+      }
+      }>
+        {edit ? "Save" : "Add"}
       </button>
 
       <div>
@@ -60,6 +85,7 @@ function Todos() {
               </span>{" "}
               <button onClick={() => handleDelete(todo.id)}>Delete</button>{" "}
               <button onClick={() => handleComplete(todo.id)}>Complete</button>
+              <button onClick={() => handleEdit(todo)} style={{ marginLeft: "4px" }}>Edit</button>
               <br /> <br />
             </li>
           ))}
