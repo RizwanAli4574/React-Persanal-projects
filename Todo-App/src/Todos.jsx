@@ -5,8 +5,6 @@ function Todos() {
   const [todos, setTodos] = useState([]);
   const [edit, setEdit] = useState(null)
 
-  console.log(input);
-
   const handleTodo = () => {
     if (!input.trim()) return alert("Please Enter Todo");
 
