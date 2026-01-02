@@ -22,15 +22,18 @@ function Todo2() {
             ? { ...todo, completed: !todo.completed }
             : todo
         );
-      case "SET":
-        return action.payload;
 
       default:
         return state;
     }
   };
 
-  const [state, dispatch] = useReducer(reducer, []);
+  const init = () => {
+    const data = localStorage.getItem("todo");
+    return data ? JSON.parse(data) : [];
+  };
+
+  const [state, dispatch] = useReducer(reducer, [], init);
   const [text, setText] = useState("");
 
   const addTodo = () => {
@@ -42,24 +45,9 @@ function Todo2() {
     setText("");
   };
 
-  const storeTodo = () => {
+  useEffect(() => {
     localStorage.setItem("todo", JSON.stringify(state));
-  };
-
-  const getTodo = () => {
-    const data = localStorage.getItem("todo");
-    if (data) {
-      dispatch({ type: "SET", payload: JSON.parse(data) });
-    }
-  };
-
-  useEffect(() => {
-    storeTodo();
   }, [state]);
-
-  useEffect(() => {
-    getTodo();
-  }, []);
 
   return (
     <div>
