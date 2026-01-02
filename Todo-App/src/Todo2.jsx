@@ -1,8 +1,6 @@
-import { useState, useReducer } from "react";
+import { useState, useReducer, useEffect } from "react";
 
 function Todo2() {
-  const intial = [];
-
   const reducer = (state, action) => {
     switch (action.type) {
       case "ADD":
@@ -24,22 +22,44 @@ function Todo2() {
             ? { ...todo, completed: !todo.completed }
             : todo
         );
+      case "SET":
+        return action.payload;
+
       default:
         return state;
     }
   };
 
-  const [state, dispatch] = useReducer(reducer, intial);
+  const [state, dispatch] = useReducer(reducer, []);
   const [text, setText] = useState("");
 
   const addTodo = () => {
-    if (text === "") return;
+    if (text === "") return alert("Please enter a todo");
     dispatch({
       type: "ADD",
       payload: { id: Date.now(), text: text, completed: false },
     });
     setText("");
   };
+
+  const storeTodo = () => {
+    localStorage.setItem("todo", JSON.stringify(state));
+  };
+
+  const getTodo = () => {
+    const data = localStorage.getItem("todo");
+    if (data) {
+      dispatch({ type: "SET", payload: JSON.parse(data) });
+    }
+  };
+
+  useEffect(() => {
+    storeTodo();
+  }, [state]);
+
+  useEffect(() => {
+    getTodo();
+  }, []);
 
   return (
     <div>
